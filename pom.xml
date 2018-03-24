@@ -15,17 +15,6 @@
   </properties>
 
   <dependencies>
-    <!--<dependency>-->
-      <!--<groupId>com.strapdata.elasticsearch.client</groupId>-->
-      <!--<artifactId>transport</artifactId>-->
-      <!--<version>5.5.0</version>-->
-    <!--</dependency>-->
-
-    <dependency>
-      <groupId>org.elasticsearch.client</groupId>
-      <artifactId>transport</artifactId>
-      <version>5.1.2</version>
-    </dependency>
 
     <dependency>
       <groupId>com.google.code.gson</groupId>
@@ -46,5 +35,36 @@
       <version>2.11.0</version>
     </dependency>
 
+      <dependency>
+          <groupId>org.elasticsearch.client</groupId>
+          <artifactId>transport</artifactId>
+          <version>5.6.5</version>
+      </dependency>
+
+      <!--ElascticSearch X-pack安全认证-->
+      <!-- add the x-pack jar as a dependency -->
+      <dependency>
+          <groupId>org.elasticsearch.client</groupId>
+          <artifactId>x-pack-transport</artifactId>
+          <version>5.5.2</version>
+      </dependency>
+
   </dependencies>
+    <repositories>
+
+        <!--ElascticSearch X-pack安全认证-->
+         <!--add the elasticsearch repo-->
+        <repository>
+            <id>elasticsearch-releases</id>
+            <url>https://artifacts.elastic.co/maven</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+    </repositories>
+
 </project>

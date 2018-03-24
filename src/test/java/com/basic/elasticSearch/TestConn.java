@@ -3,9 +3,10 @@ package com.basic.elasticSearch;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.net.InetAddress;
 
@@ -21,18 +22,26 @@ public class TestConn {
 
     public static final String CLUSTER_NAME="bigdata";
 
-    public static Settings.Builder settings=Settings.builder().put("cluster.name",CLUSTER_NAME);
+    public static Settings.Builder settings=Settings.builder()
+            .put("cluster.name",CLUSTER_NAME)
+            .put("client.transport.sniff", true)
+            .put("xpack.security.transport.ssl.enabled", false)
+            .put("xpack.security.user", "elastic:changeme");
     /**
      * 获取客户端
      * @throws Exception
      */
     @Before
     public void getClinet()throws Exception{
-        client = new PreBuiltTransportClient(settings.build())
+        client = new PreBuiltXPackTransportClient(settings.build())
                 .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host),port));
         System.out.println(client);
     }
 
+    @Test
+    public void test(){
+
+    }
     /**
      * 关闭连接
      */

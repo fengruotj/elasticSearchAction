@@ -18,7 +18,7 @@ import java.net.InetAddress;
  * locate com.basic.elasticSearch
  * Created by mastertj on 2018/3/22.
  */
-public class TestFilm_smartcn {
+public class TestFilm_ik {
     private static String host="ubuntu2"; // 服务器地址
     private static int port=9300; // 端口
     private TransportClient client=null;
@@ -99,7 +99,7 @@ public class TestFilm_smartcn {
         jsonArray.add(jsonObject5);
 
         for(int i=0;i<jsonArray.size();i++){
-            IndexResponse indexResponse = client.prepareIndex("film_smartcn", "dongzuo")
+            IndexResponse indexResponse = client.prepareIndex("film_ik", "dongzuo")
                    .setSource(jsonArray.get(i).toString(),XContentType.JSON).get();
             System.out.println("索引名称:"+indexResponse.getIndex());
             System.out.println("索引类型:"+indexResponse.getType());

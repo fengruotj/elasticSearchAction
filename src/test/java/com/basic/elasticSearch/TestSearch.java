@@ -10,12 +10,13 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.net.InetAddress;
+import java.util.Map;
 
 /**
  * locate com.basic.elasticSearch
@@ -29,14 +30,21 @@ public class TestSearch {
 
     public static final String CLUSTER_NAME="bigdata";
 
-    public static Settings.Builder settings=Settings.builder().put("cluster.name",CLUSTER_NAME);
+    //增加elascticsearch X-pack安全认证
+    public static Settings.Builder settings=Settings.builder()
+            .put("cluster.name",CLUSTER_NAME)
+            .put("client.transport.sniff", true)
+            .put("xpack.security.transport.ssl.enabled", false)
+            .put("xpack.security.user", "elastic:changeme");
+
     /**
      * 获取客户端
      * @throws Exception
      */
     @Before
     public void getClinet()throws Exception{
-        client = new PreBuiltTransportClient(settings.build())
+        //获取 elascticsearch X-pack安全认证客户端
+        client = new PreBuiltXPackTransportClient(settings.build())
                 .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host),port));
         System.out.println(client);
     }
@@ -61,6 +69,11 @@ public class TestSearch {
         SearchHits hits=sr.getHits();
         for(SearchHit hit:hits){
             System.out.println(hit.getSourceAsString());
+            Map<String, Object> source = hit.getSource();
+            for (Map.Entry<String, Object> stringObjectEntry : source.entrySet()) {
+                System.out.println(stringObjectEntry.getKey()+" : "+stringObjectEntry.getValue());
+            }
+            System.out.println();
         }
     }
 
@@ -78,6 +91,11 @@ public class TestSearch {
         SearchHits hits=sr.getHits();
         for(SearchHit hit:hits){
             System.out.println(hit.getSourceAsString());
+            Map<String, Object> source = hit.getSource();
+            for (Map.Entry<String, Object> stringObjectEntry : source.entrySet()) {
+                System.out.println(stringObjectEntry.getKey()+" : "+stringObjectEntry.getValue());
+            }
+            System.out.println();
         }
     }
 

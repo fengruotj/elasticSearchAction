@@ -9,12 +9,13 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.net.InetAddress;
+import java.util.Map;
 
 /**
  * locate com.basic.elasticSearch
@@ -27,14 +28,19 @@ public class TestIndex {
 
     public static final String CLUSTER_NAME="bigdata";
 
-    public static Settings.Builder settings=Settings.builder().put("cluster.name",CLUSTER_NAME);
+    public static Settings.Builder settings=Settings.builder()
+            .put("cluster.name",CLUSTER_NAME)
+            .put("client.transport.sniff", true)
+            .put("xpack.security.transport.ssl.enabled", false)
+            .put("xpack.security.user", "elastic:changeme");
+
     /**
      * 获取客户端
      * @throws Exception
      */
     @Before
     public void getClinet()throws Exception{
-        client = new PreBuiltTransportClient(settings.build())
+        client = new PreBuiltXPackTransportClient(settings.build())
                 .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host),port));
         System.out.println(client);
     }
@@ -59,8 +65,7 @@ public class TestIndex {
         jsonObject.addProperty("price","100");
 
         IndexResponse indexResponse = client.prepareIndex("book", "java", "1")
-                .setSource(jsonObject.toString())
-                .setContentType(XContentType.JSON).get();
+               .setSource(jsonObject.toString(),XContentType.JSON).get();
         System.out.println("索引名称:"+indexResponse.getIndex());
         System.out.println("索引类型:"+indexResponse.getType());
         System.out.println("索引Id:"+indexResponse.getId());
@@ -78,8 +83,7 @@ public class TestIndex {
         jsonObject.addProperty("price","100");
 
         IndexResponse indexResponse = client.prepareIndex("book", "linux", "2")
-                .setSource(jsonObject.toString())
-                .setContentType(XContentType.JSON).get();
+                .setSource(jsonObject.toString(),XContentType.JSON).get();
         System.out.println("索引名称:"+indexResponse.getIndex());
         System.out.println("索引类型:"+indexResponse.getType());
         System.out.println("索引Id:"+indexResponse.getId());
@@ -94,6 +98,9 @@ public class TestIndex {
     public void testGet(){
         GetResponse getFields = client.prepareGet("book", "java", "1").get();
         System.out.println(getFields.getSourceAsString());
+        for (Map.Entry<String, Object> stringObjectEntry : getFields.getSource().entrySet()) {
+            System.out.println(stringObjectEntry.getKey()+" : "+stringObjectEntry.getValue() );
+        }
     }
 
     /**
@@ -108,8 +115,7 @@ public class TestIndex {
         jsonObject.addProperty("price", 102);
 
         UpdateResponse response=client.prepareUpdate("book", "java", "1")
-                .setDoc(jsonObject.toString())
-                .get();
+                .setDoc(jsonObject.toString(),XContentType.JSON).get();
         System.out.println("索引名称："+response.getIndex());
         System.out.println("类型："+response.getType());
         System.out.println("文档ID："+response.getId());
@@ -121,7 +127,7 @@ public class TestIndex {
      */
     @Test
     public void testDelete(){
-        DeleteResponse deleteResponse = client.prepareDelete("book", "java", "1").get();
+        DeleteResponse deleteResponse = client.prepareDelete("film", "dongzuo", "_serach").get();
         System.out.println("索引名称:"+deleteResponse.getIndex());
         System.out.println("索引类型:"+deleteResponse.getType());
         System.out.println("索引Id:"+deleteResponse.getId());
